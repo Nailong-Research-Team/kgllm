@@ -11,7 +11,7 @@ from app.core.security import verify_password
 from app.db.database import get_mysql_connection
 from app.models.user import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token", scheme_name="JWT")
 
 def get_db() -> Generator:
     try:

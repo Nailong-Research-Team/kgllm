@@ -4,6 +4,7 @@ from sqlalchemy import Boolean, Column, Integer, String, Enum
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from enum import Enum
+from datetime import datetime
 
 class UserRole(str, Enum):
     ADMIN = "admin"
@@ -38,6 +39,7 @@ class User(Base):
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
     role = Column(String, default=UserRole.USER)
+    created_at = Column(String, nullable=False)
 
 class UserInDB(UserInDBBase):
     hashed_password: str
@@ -47,4 +49,23 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    email: Optional[str] = None 
+    email: Optional[str] = None
+
+class User:
+    def __init__(
+        self,
+        id: int,
+        email: str,
+        full_name: str,
+        hashed_password: str,
+        is_active: bool = True,
+        role: UserRole = UserRole.USER,
+        created_at: Optional[datetime] = None
+    ):
+        self.id = id
+        self.email = email
+        self.full_name = full_name
+        self.hashed_password = hashed_password
+        self.is_active = is_active
+        self.role = role
+        self.created_at = created_at or datetime.utcnow() 

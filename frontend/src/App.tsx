@@ -69,7 +69,7 @@ const AppContent: React.FC = () => {
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
 			<TopBar
-				projectName="FastAPI React Demo"
+				projectName="KGLLM"
 				onLogout={logout}
 			/>
 			<div
