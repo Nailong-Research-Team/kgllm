@@ -8,7 +8,9 @@ import {
     Container,
     CircularProgress,
     Avatar,
+    Tooltip
 } from '@mui/material';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -44,6 +46,10 @@ const ChatPage: React.FC = () => {
     const [isTyping, setIsTyping] = useState(false);
     const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    // 新增：文件上传相关状态
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    // 新增：图片预览用URL缓存，避免内存泄漏
+    const [filePreviews, setFilePreviews] = useState<{ [msgId: string]: string }>({});
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,11 +72,38 @@ const ChatPage: React.FC = () => {
     }, [messages]);
 
     const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+        if ((!input.trim() && !selectedFile) || isLoading) return;
 
         const trimmedInput = input.trim();
         setInput('');
         setIsLoading(true);
+
+        // 新增：如果有文件，先发文件消息
+        if (selectedFile) {
+            const isImage = selectedFile.type.startsWith('image/');
+            const msgId = Date.now().toString() + '-file';
+            let previewUrl = '';
+            if (isImage) {
+                previewUrl = URL.createObjectURL(selectedFile);
+                setFilePreviews(prev => ({ ...prev, [msgId]: previewUrl }));
+            }
+            const fileMsg: Message & { fileType?: string; fileName?: string; previewUrl?: string } = {
+                id: msgId,
+                content: isImage ? '' : `[文件] ${selectedFile.name}`,
+                role: 'user',
+                timestamp: new Date().toISOString(),
+                fileType: selectedFile.type,
+                fileName: selectedFile.name,
+                previewUrl: isImage ? previewUrl : undefined
+            };
+            setMessages(prev => [...prev, fileMsg]);
+            setSelectedFile(null);
+        }
+
+        if (!trimmedInput) {
+            setIsLoading(false);
+            return;
+        }
 
         const userMessage: Message = {
             id: Date.now().toString(),
@@ -118,6 +151,18 @@ const ChatPage: React.FC = () => {
         }
     };
 
+    // 文件选择变化
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedFile(e.target.files[0]);
+        }
+    };
+
+    // 移除已选文件
+    const handleRemoveFile = () => {
+        setSelectedFile(null);
+    };
+
     return (
         <Box sx={{
             width: '100%',
@@ -146,6 +191,9 @@ const ChatPage: React.FC = () => {
             }}>
                 {messages.map((message) => {
                     const isUser = message.role === 'user';
+                    // 新增：图片消息渲染
+                    const isImageMsg = (message as any).fileType && (message as any).fileType.startsWith('image/');
+                    const previewUrl = (message as any).previewUrl || filePreviews[message.id];
                     return (
                         <MessageRow key={message.id} isUser={isUser}>
                             <Avatar
@@ -156,7 +204,19 @@ const ChatPage: React.FC = () => {
                                 {isUser ? 'U' : 'A'}
                             </Avatar>
                             <Bubble isUser={isUser} elevation={2} sx={{ mt: 0.5, ml: isUser ? 0 : 1, mr: isUser ? 1 : 0 }}>
-                                {isUser ? (
+                                {/* 图片消息优先渲染图片 */}
+                                {isImageMsg && previewUrl ? (
+                                  <Box>
+                                    <img
+                                      src={previewUrl}
+                                      alt={(message as any).fileName || '图片'}
+                                      style={{ maxWidth: 220, maxHeight: 180, borderRadius: 8, display: 'block', marginBottom: 4 }}
+                                    />
+                                    <Typography variant="caption" color="text.secondary">
+                                      {(message as any).fileName}
+                                    </Typography>
+                                  </Box>
+                                ) : isUser ? (
                                     <Typography sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{message.content}</Typography>
                                 ) : (
                                     <ReactMarkdown
@@ -210,6 +270,27 @@ const ChatPage: React.FC = () => {
                 boxSizing: 'border-box',
             }}>
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+                    {/* 文件上传按钮和隐藏input */}
+                    <input
+                        type="file"
+                        style={{ display: 'none' }}
+                        id="chat-file-input"
+                        onChange={handleFileChange}
+                        disabled={isLoading}
+                    />
+                    <Tooltip title="上传文件">
+                      <span>
+                        <IconButton
+                            color="primary"
+                            component="label"
+                            htmlFor="chat-file-input"
+                            disabled={isLoading}
+                            sx={{ height: 48, width: 48 }}
+                        >
+                            <AttachFileIcon />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
                     <TextField
                         fullWidth
                         multiline
@@ -224,12 +305,23 @@ const ChatPage: React.FC = () => {
                     <IconButton
                         color="primary"
                         onClick={handleSend}
-                        disabled={isLoading || !input.trim()}
+                        disabled={isLoading || (!input.trim() && !selectedFile)}
                         sx={{ height: 48, width: 48 }}
                     >
                         {isLoading ? <CircularProgress size={24} /> : <SendIcon />}
                     </IconButton>
                 </Box>
+                {/* 显示已选文件 */}
+                {selectedFile && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, ml: 1 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                      已选文件：{selectedFile.name}
+                    </Typography>
+                    <IconButton size="small" onClick={handleRemoveFile} disabled={isLoading}>
+                      ×
+                    </IconButton>
+                  </Box>
+                )}
             </Box>
         </Box>
     );

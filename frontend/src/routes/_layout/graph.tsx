@@ -32,6 +32,14 @@ const mockData = {
 
 const GraphPage: React.FC = () => {
   const cyRef = useRef<HTMLDivElement>(null);
+  const cyInstance = useRef<cytoscape.Core | null>(null);
+
+  // 重置视图函数
+  const handleFit = () => {
+    if (cyInstance.current) {
+      cyInstance.current.fit(undefined, 40);
+    }
+  };
 
   useEffect(() => {
     if (cyRef.current) {
@@ -68,15 +76,48 @@ const GraphPage: React.FC = () => {
         ],
         layout: {
           name: 'grid',
-          rows: 1
+          // rows: 1
         }
       });
-      return () => cy.destroy();
+      cyInstance.current = cy;
+      // 初始化自动fit
+      cy.ready(() => {
+        cy.fit(undefined, 40);
+      });
+      // 双击空白重置视图
+      cy.on('dbltap', (evt) => {
+        if (evt.target === cy) {
+          cy.fit(undefined, 40);
+        }
+      });
+      return () => {
+        cyInstance.current = null;
+        cy.destroy();
+      };
     }
   }, []);
 
   return (
-    <div style={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f7f9fa' }}>
+    <div style={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f7f9fa', position: 'relative' }}>
+      {/* 重置视图按钮 */}
+      <button
+        onClick={handleFit}
+        style={{
+          position: 'absolute',
+          top: 30,
+          right: 40,
+          zIndex: 10,
+          background: '#1976d2',
+          color: '#fff',
+          border: 'none',
+          borderRadius: 6,
+          padding: '8px 18px',
+          fontWeight: 500,
+          fontSize: 15,
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(25,118,210,0.08)',
+        }}
+      >重置视图</button>
       <div
         ref={cyRef}
         style={{
