@@ -27,7 +27,7 @@ const Settings: React.FC<SettingsProps> = ({ type }) => {
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState("");
 	const [success, setSuccess] = useState("");
-	const [language, setLanguage] = useState("zh");
+	// const [language, setLanguage] = useState("zh");
 	const [loading, setLoading] = useState(true);
 
 	// 获取用户信息
@@ -56,9 +56,9 @@ const Settings: React.FC<SettingsProps> = ({ type }) => {
 		}
 	};
 
-	const handleLanguageChange = (lang: string) => {
-		setLanguage(lang);
-	};
+	// const handleLanguageChange = (lang: string) => {
+	// 	setLanguage(lang);
+	// };
 
 	const handleSave = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -278,7 +278,7 @@ const Settings: React.FC<SettingsProps> = ({ type }) => {
 							</Button>
 						</Box>
 					</Box>
-					<Box>
+					{/* <Box>
 						<Typography variant="body1" sx={{ mb: 1 }}>
 							语言
 						</Typography>
@@ -293,7 +293,7 @@ const Settings: React.FC<SettingsProps> = ({ type }) => {
 							onClick={() => handleLanguageChange("en")}>
 							English
 						</Button>
-					</Box>
+					</Box> */}
 				</Stack>
 			</Box>
 		</Box>

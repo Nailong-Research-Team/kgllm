@@ -28,6 +28,18 @@ def init_mysql():
         )
     ''')
     
+    # 创建消息表
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS messages (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            content TEXT NOT NULL,
+            role VARCHAR(20) NOT NULL,
+            timestamp DATETIME NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
+    
     conn.commit()
     cursor.close()
     conn.close() 

@@ -27,3 +27,7 @@ class User(UserInDBBase):
 
 class UserInDB(UserInDBBase):
     hashed_password: str 
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

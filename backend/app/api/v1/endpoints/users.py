@@ -95,7 +95,6 @@ def change_password(
     cursor.close()
     
     return {"message": "Password updated successfully"}
-    return {"message": "Password updated successfully"}
 
 @router.put("/{user_id}")
 def update_user(

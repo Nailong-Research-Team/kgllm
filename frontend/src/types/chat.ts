@@ -1,13 +1,14 @@
 export interface Message {
     id: string;
     content: string;
-    sender: 'user' | 'system';
-    type: 'text' | 'image';
+    role: 'user' | 'assistant';
     timestamp: string;
-    user_id: string;
-    user_name: string;
+    sender?: string;
+    type?: string;
+    user_id?: string;
+    user_name?: string;
     user_avatar?: string;
-    created_at: string;
+    created_at?: string;
 }
 
 export interface SendMessageRequest {

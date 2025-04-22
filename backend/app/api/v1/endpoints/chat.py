@@ -4,6 +4,7 @@ from datetime import datetime
 from app.api.deps import get_current_active_user
 from app.models.chat import Message, MessageCreate
 from app.db.database import get_mysql_connection
+from .zhipuai_api import get_zhipuai_reply
 
 router = APIRouter()
 
@@ -43,20 +44,24 @@ async def send_message(
         )
         mysql_conn.commit()
         
-        # TODO: 调用AI服务获取回复
-        assistant_response = "这是一个示例回复"
+        # 调用质谱AI服务获取回复
+        assistant_response = get_zhipuai_reply(message.content)
         
         # 保存助手回复
         cursor.execute(
             """
             INSERT INTO messages (user_id, content, role, timestamp)
             VALUES (%s, %s, %s, %s)
-            RETURNING id, content, role, timestamp
             """,
             (current_user["id"], assistant_response, "assistant", datetime.utcnow())
         )
         mysql_conn.commit()
-        
+
+        assistant_msg_id = cursor.lastrowid
+        cursor.execute(
+            "SELECT id, content, role, timestamp FROM messages WHERE id = %s",
+            (assistant_msg_id,)
+        )
         response = cursor.fetchone()
         return response
         

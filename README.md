@@ -11,9 +11,12 @@ project/
 │   │   ├── api/                    # API 相关代码
 │   │   │   ├── v1/
 │   │   │   │   └── endpoints/      # API端点实现（按功能模块划分）
-│   │   │   │       ├── chat.py     # 聊天相关接口
-│   │   │   │       ├── users.py    # 用户相关接口
-│   │   │   │       └── admin.py    # 管理接口
+│   │   │   │       ├── chat.py         # 聊天消息相关接口
+│   │   │   │       ├── zhipuai_api.py  # 调用智谱AI大模型API的接口
+│   │   │   │       ├── users.py        # 用户管理相关接口
+│   │   │   │       ├── admin.py        # 管理员相关接口
+│   │   │   │       ├── auth.py         # 认证登录相关接口
+│   │   │   │       └── system.py       # 系统信息/健康检查等接口
 │   │   │   └── deps.py             # API依赖项（认证、权限等）
 │   │   ├── core/                   # 核心配置和工具
 │   │   │   ├── config.py           # 应用配置（环境变量、常量等）
@@ -118,19 +121,21 @@ source venv/bin/activate  # Linux/Mac
 .\venv\Scripts\activate  # Windows
 ```
 
+或者使用 conda
+
 2. 安装依赖：
 ```bash
 pip install -r requirements.txt
 ```
 
-3. 配置环境变量（创建 .env 文件）：
+3. 配置环境变量（创建 .env 文件，仅需配置 AI Key，数据库等参数如无特殊需求可用默认值）：
 ```env
-SECRET_KEY=your-secret-key-here
-MYSQL_HOST=localhost
-MYSQL_USER=root
-MYSQL_PASSWORD=your-password
-MYSQL_DB=chatapp
-MYSQL_PORT=3306
+ZHIPUAI_API_KEY=你的智谱AI key
+```
+
+如需自定义数据库连接，请在 .env 中补充：
+```env
+ZHIPUAI_API_KEY=your-zhipuai-api-key
 ```
 
 4. 启动后端服务：
@@ -150,6 +155,8 @@ npm install
 ```bash
 npm start
 ```
+
+4. 访问 `http://localhost:3000` 即可体验前端聊天界面。
 
 ## API文档
 
@@ -284,7 +291,9 @@ npm start
 - Swagger UI: http://localhost:8000/api/docs
 - ReDoc: http://localhost:8000/api/redoc
 
-## 数据库表结构
+---
+
+## 附录：数据库表结构（仅供参考）
 
 ### users 表
 ```sql
@@ -309,3 +318,4 @@ CREATE TABLE messages (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
+

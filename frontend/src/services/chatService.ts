@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../utils/axios';
 
 export interface Message {
     id: string;
@@ -7,16 +7,15 @@ export interface Message {
     timestamp: string;
 }
 
-const API_URL = '/api/chat';
+const API_URL = '/api/v1/chat';
 
 export const chatService = {
     sendMessage: async (content: string): Promise<Message> => {
-        const response = await axios.post(`${API_URL}/send`, { content });
+        const response = await axiosInstance.post(`${API_URL}/send`, { content });
         return response.data;
     },
-
     getHistory: async (): Promise<Message[]> => {
-        const response = await axios.get(`${API_URL}/history`);
+        const response = await axiosInstance.get(`${API_URL}/history`);
         return response.data;
     },
-}; 
+};
