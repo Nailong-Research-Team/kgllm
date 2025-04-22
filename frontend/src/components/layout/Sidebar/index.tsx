@@ -64,11 +64,17 @@ const Sidebar: React.FC = () => {
                     <ListItemText primary="系统设置" />
                 </ListItem>
                 <ListItem button onClick={() => navigate('/chat')}>
-                    <ListItemIcon>
-                        <ChatIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="AI 助手" />
-                </ListItem>
+    <ListItemIcon>
+        <ChatIcon />
+    </ListItemIcon>
+    <ListItemText primary="AI 助手" />
+</ListItem>
+<ListItem button onClick={() => navigate('/graph')}>
+    <ListItemIcon>
+        <DashboardIcon />
+    </ListItemIcon>
+    <ListItemText primary="知识图谱" />
+</ListItem>
                 {userProfile.role === 'admin' && (
                     <ListItem button onClick={() => navigate('/admin')}>
                         <ListItemIcon>

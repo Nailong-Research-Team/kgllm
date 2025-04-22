@@ -14,6 +14,7 @@ import Admin from "./routes/_layout/admin";
 import TopBar from "./components/layout/TopBar";
 import DashboardContent from "./components/layout/DashboardContent";
 import ChatPage from "./routes/_layout/chat";
+import GraphPage from "./routes/_layout/graph";
 import { useAuth } from "./hooks/useAuth";
 
 // 创建主题上下文
@@ -96,6 +97,7 @@ const AppContent: React.FC = () => {
 						</Route>
 						<Route path="chat" element={<ChatPage />} />
 						<Route path="admin" element={<Admin />} />
+						<Route path="graph" element={<GraphPage />} />
 						<Route index element={<Navigate to="/dashboard" />} />
 					</Route>
 				</Routes>
