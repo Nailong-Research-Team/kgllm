@@ -1,5 +1,3 @@
-# KGLLM
-
 ## 项目结构
 
 ```
@@ -127,6 +125,8 @@ source venv/bin/activate  # Linux/Mac
 ```bash
 pip install -r requirements.txt
 ```
+
+依赖有些还没加进去，到时候完善一下
 
 3. 配置环境变量（创建 .env 文件，仅需配置 AI Key，数据库等参数如无特殊需求可用默认值）：
 ```env
@@ -274,18 +274,6 @@ npm start
    }
    ```
 
-### 代码规范
-
-1. Python代码规范：
-   - 遵循 PEP 8
-   - 使用类型注解
-   - 编写文档字符串
-
-2. TypeScript代码规范：
-   - 使用 ESLint
-   - 使用类型定义
-   - 组件使用函数式组件
-
 ## 在线文档
 
 - Swagger UI: http://localhost:8000/api/docs
@@ -293,7 +281,7 @@ npm start
 
 ---
 
-## 附录：数据库表结构（仅供参考）
+## 数据库表结构（仅供参考）
 
 ### users 表
 ```sql
