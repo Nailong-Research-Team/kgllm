@@ -5,6 +5,7 @@ from app.api.deps import get_current_active_user
 from app.models.chat import Message, MessageCreate
 from app.db.database import get_mysql_connection
 from .zhipuai_api import get_zhipuai_reply
+from app.evorag import model
 
 router = APIRouter()
 
@@ -44,8 +45,8 @@ async def send_message(
         )
         mysql_conn.commit()
         
-        # 调用质谱AI服务获取回复
-        assistant_response = get_zhipuai_reply(message.content)
+        # 调用AI服务获取回复
+        assistant_response = await model.deepseek_v3(message.content)
         
         # 保存助手回复
         cursor.execute(
