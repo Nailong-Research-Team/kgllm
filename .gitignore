@@ -1,0 +1,12 @@
+backend/.env
+
+# Python 缓存文件
+__pycache__/
+*/__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE 文件
+.idea/
+.vscode/
