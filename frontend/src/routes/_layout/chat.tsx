@@ -8,7 +8,8 @@ import {
     Container,
     CircularProgress,
     Avatar,
-    Tooltip
+    Tooltip,
+    useTheme
 } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ReactMarkdown from 'react-markdown';
@@ -31,14 +32,21 @@ const Bubble = styled(Paper)<{ isUser: boolean }>(({ theme, isUser }) => ({
     padding: theme.spacing(1.5, 2),
     borderRadius: 18,
     maxWidth: '90vw',
-    backgroundColor: isUser ? theme.palette.primary.main : theme.palette.grey[100],
-    color: isUser ? theme.palette.primary.contrastText : theme.palette.text.primary,
+    backgroundColor: isUser 
+        ? theme.palette.primary.main 
+        : theme.palette.mode === 'dark' 
+            ? theme.palette.grey[800] 
+            : theme.palette.grey[100],
+    color: isUser 
+        ? theme.palette.primary.contrastText 
+        : theme.palette.text.primary,
     boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
     wordBreak: 'break-all',
     overflowWrap: 'break-word',
 }));
 
 const ChatPage: React.FC = () => {
+    const theme = useTheme();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -171,7 +179,7 @@ const ChatPage: React.FC = () => {
             overflowX: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            bgcolor: '#fafcff',
+            bgcolor: theme.palette.mode === 'dark' ? 'background.default' : '#fafcff',
             boxSizing: 'border-box',
         }}>
             {/* 消息区 */}
@@ -235,10 +243,19 @@ const ChatPage: React.FC = () => {
                                                     codeString = String(children);
                                                 }
                                                 if (inline) {
-                                                    return <code style={{ background: '#f6f8fa', borderRadius: 4, padding: '2px 4px' }} {...rest}>{codeString}</code>;
+                                                    return <code style={{ 
+                                                        background: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : '#f6f8fa', 
+                                                        borderRadius: 4, 
+                                                        padding: '2px 4px' 
+                                                    }} {...rest}>{codeString}</code>;
                                                 }
                                                 return (
-                                                    <pre className={className} style={{ background: '#f6f8fa', borderRadius: 6, padding: 12, overflow: 'auto' }}>
+                                                    <pre className={className} style={{ 
+                                                        background: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : '#f6f8fa', 
+                                                        borderRadius: 6, 
+                                                        padding: 12, 
+                                                        overflow: 'auto' 
+                                                    }}>
                                                         <code>{codeString}</code>
                                                     </pre>
                                                 );
@@ -300,7 +317,18 @@ const ChatPage: React.FC = () => {
                         onKeyPress={handleKeyPress}
                         placeholder="输入消息..."
                         disabled={isLoading}
-                        sx={{ flex: 1, background: '#fff', borderRadius: 2 }}
+                        sx={{ 
+                            flex: 1, 
+                            background: theme.palette.mode === 'dark' ? 'background.paper' : '#fff',
+                            borderRadius: 2,
+                            '& .MuiInputBase-input': {
+                                color: theme.palette.text.primary
+                            },
+                            '& .MuiInputBase-input::placeholder': {
+                                color: theme.palette.text.secondary,
+                                opacity: 1
+                            }
+                        }}
                     />
                     <IconButton
                         color="primary"
