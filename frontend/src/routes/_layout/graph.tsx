@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import cytoscape from 'cytoscape';
+import { useTheme } from '@mui/material';
 
 const mockData = {
   nodes: [
@@ -31,6 +32,7 @@ const mockData = {
 };
 
 const GraphPage: React.FC = () => {
+  const theme = useTheme();
   const cyRef = useRef<HTMLDivElement>(null);
   const cyInstance = useRef<cytoscape.Core | null>(null);
 
@@ -50,9 +52,9 @@ const GraphPage: React.FC = () => {
           {
             selector: 'node',
             style: {
-              'background-color': '#0074D9',
+              'background-color': theme.palette.primary.main,
               'label': 'data(label)',
-              'color': '#fff',
+              'color': theme.palette.primary.contrastText,
               'text-valign': 'center',
               'text-halign': 'center',
               'font-size': '14px',
@@ -64,19 +66,18 @@ const GraphPage: React.FC = () => {
             selector: 'edge',
             style: {
               'width': 3,
-              'line-color': '#ccc',
-              'target-arrow-color': '#ccc',
+              'line-color': theme.palette.mode === 'dark' ? theme.palette.grey[400] : theme.palette.grey[600],
+              'target-arrow-color': theme.palette.mode === 'dark' ? theme.palette.grey[400] : theme.palette.grey[600],
               'target-arrow-shape': 'triangle',
               'curve-style': 'bezier',
               'label': 'data(label)',
               'font-size': '12px',
-              'color': '#888'
+              'color': theme.palette.mode === 'dark' ? theme.palette.grey[300] : theme.palette.grey[700]
             }
           }
         ],
         layout: {
           name: 'grid',
-          // rows: 1
         }
       });
       cyInstance.current = cy;
@@ -95,10 +96,18 @@ const GraphPage: React.FC = () => {
         cy.destroy();
       };
     }
-  }, []);
+  }, [theme]);
 
   return (
-    <div style={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f7f9fa', position: 'relative' }}>
+    <div style={{ 
+      height: '100%', 
+      width: '100%', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      background: theme.palette.background.default, 
+      position: 'relative' 
+    }}>
       {/* 重置视图按钮 */}
       <button
         onClick={handleFit}
@@ -107,15 +116,15 @@ const GraphPage: React.FC = () => {
           top: 30,
           right: 40,
           zIndex: 10,
-          background: '#1976d2',
-          color: '#fff',
+          background: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
           border: 'none',
           borderRadius: 6,
           padding: '8px 18px',
           fontWeight: 500,
           fontSize: 15,
           cursor: 'pointer',
-          boxShadow: '0 2px 8px rgba(25,118,210,0.08)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
         }}
       >重置视图</button>
       <div
@@ -125,10 +134,12 @@ const GraphPage: React.FC = () => {
           height: 'calc(100vh - 80px)', 
           minWidth: 600,
           minHeight: 400,
-          background: '#fff',
-          border: '1.5px solid #e0e3e7',
+          background: theme.palette.background.paper,
+          border: `1.5px solid ${theme.palette.divider}`,
           borderRadius: 18,
-          boxShadow: '0 6px 24px 0 rgba(60,72,100,0.08)',
+          boxShadow: theme.palette.mode === 'dark' 
+            ? '0 6px 24px 0 rgba(0,0,0,0.2)' 
+            : '0 6px 24px 0 rgba(60,72,100,0.08)',
           transition: 'box-shadow 0.2s',
         }}
       />
