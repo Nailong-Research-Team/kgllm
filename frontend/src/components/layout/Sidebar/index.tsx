@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Box,
     Typography,
@@ -17,16 +17,31 @@ import {
     Dashboard as DashboardIcon,
     Logout as LogoutIcon,
     Chat as ChatIcon,
+    BubbleChart as GraphIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../../hooks/useAuth';
 
 const Sidebar: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { userProfile, logout } = useAuth();
 
     if (!userProfile) {
         return null;
     }
+
+    const isActive = (path: string) => {
+        if (path === '/dashboard') {
+            return location.pathname === '/dashboard';
+        }
+        if (path === '/settings/profile') {
+            return location.pathname === '/settings/profile';
+        }
+        if (path === '/settings/system') {
+            return location.pathname === '/settings/system';
+        }
+        return location.pathname.startsWith(path);
+    };
 
     return (
         <Box sx={{ p: 2 }}>
@@ -45,46 +60,121 @@ const Sidebar: React.FC = () => {
             </Box>
 
             <List>
-                <ListItem button onClick={() => navigate('/dashboard')}>
+                <ListItem 
+                    button 
+                    onClick={() => navigate('/dashboard')}
+                    sx={{
+                        bgcolor: isActive('/dashboard') ? 'action.selected' : 'transparent',
+                        borderRadius: 1,
+                        mb: 0.5,
+                        '&:hover': {
+                            bgcolor: 'action.hover',
+                        }
+                    }}
+                >
                     <ListItemIcon>
-                        <DashboardIcon />
+                        <DashboardIcon color={isActive('/dashboard') ? 'primary' : 'inherit'} />
                     </ListItemIcon>
                     <ListItemText primary="仪表板" />
                 </ListItem>
-                <ListItem button onClick={() => navigate('/settings/profile')}>
+                <ListItem 
+                    button 
+                    onClick={() => navigate('/settings/profile')}
+                    sx={{
+                        bgcolor: isActive('/settings/profile') ? 'action.selected' : 'transparent',
+                        borderRadius: 1,
+                        mb: 0.5,
+                        '&:hover': {
+                            bgcolor: 'action.hover',
+                        }
+                    }}
+                >
                     <ListItemIcon>
-                        <PersonIcon />
+                        <PersonIcon color={isActive('/settings/profile') ? 'primary' : 'inherit'} />
                     </ListItemIcon>
                     <ListItemText primary="个人资料" />
                 </ListItem>
-                <ListItem button onClick={() => navigate('/settings/system')}>
+                <ListItem 
+                    button 
+                    onClick={() => navigate('/settings/system')}
+                    sx={{
+                        bgcolor: isActive('/settings/system') ? 'action.selected' : 'transparent',
+                        borderRadius: 1,
+                        mb: 0.5,
+                        '&:hover': {
+                            bgcolor: 'action.hover',
+                        }
+                    }}
+                >
                     <ListItemIcon>
-                        <SettingsIcon />
+                        <SettingsIcon color={isActive('/settings/system') ? 'primary' : 'inherit'} />
                     </ListItemIcon>
                     <ListItemText primary="系统设置" />
                 </ListItem>
-                <ListItem button onClick={() => navigate('/chat')}>
-                <ListItemIcon>
-                    <ChatIcon />
-                </ListItemIcon>
-                <ListItemText primary="AI 助手" />
-            </ListItem>
-            <ListItem button onClick={() => navigate('/graph')}>
-                <ListItemIcon>
-                    <DashboardIcon />
-                </ListItemIcon>
-                <ListItemText primary="知识图谱" />
-            </ListItem>
+                <ListItem 
+                    button 
+                    onClick={() => navigate('/chat')}
+                    sx={{
+                        bgcolor: isActive('/chat') ? 'action.selected' : 'transparent',
+                        borderRadius: 1,
+                        mb: 0.5,
+                        '&:hover': {
+                            bgcolor: 'action.hover',
+                        }
+                    }}
+                >
+                    <ListItemIcon>
+                        <ChatIcon color={isActive('/chat') ? 'primary' : 'inherit'} />
+                    </ListItemIcon>
+                    <ListItemText primary="AI 助手" />
+                </ListItem>
+                <ListItem 
+                    button 
+                    onClick={() => navigate('/graph')}
+                    sx={{
+                        bgcolor: isActive('/graph') ? 'action.selected' : 'transparent',
+                        borderRadius: 1,
+                        mb: 0.5,
+                        '&:hover': {
+                            bgcolor: 'action.hover',
+                        }
+                    }}
+                >
+                    <ListItemIcon>
+                        <GraphIcon color={isActive('/graph') ? 'primary' : 'inherit'} />
+                    </ListItemIcon>
+                    <ListItemText primary="知识图谱" />
+                </ListItem>
                 {userProfile.role === 'admin' && (
-                    <ListItem button onClick={() => navigate('/admin')}>
+                    <ListItem 
+                        button 
+                        onClick={() => navigate('/admin')}
+                        sx={{
+                            bgcolor: isActive('/admin') ? 'action.selected' : 'transparent',
+                            borderRadius: 1,
+                            mb: 0.5,
+                            '&:hover': {
+                                bgcolor: 'action.hover',
+                            }
+                        }}
+                    >
                         <ListItemIcon>
-                            <AdminPanelSettingsIcon />
+                            <AdminPanelSettingsIcon color={isActive('/admin') ? 'primary' : 'inherit'} />
                         </ListItemIcon>
                         <ListItemText primary="管理员面板" />
                     </ListItem>
                 )}
                 <Divider sx={{ my: 2 }} />
-                <ListItem button onClick={logout}>
+                <ListItem 
+                    button 
+                    onClick={logout}
+                    sx={{
+                        borderRadius: 1,
+                        '&:hover': {
+                            bgcolor: 'action.hover',
+                        }
+                    }}
+                >
                     <ListItemIcon>
                         <LogoutIcon />
                     </ListItemIcon>
